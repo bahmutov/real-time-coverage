@@ -53,8 +53,9 @@
     "size": "t=\"$(npm pack .)\"; wc -c \"${t}\"; tar tvf \"${t}\"; rm \"${t}\";",
     "test": "npm run unit",
     "unit": "mocha src/*-spec.js",
-    "instrument": "istanbul instrument examples/calc.js > examples/calc-instrumented.js",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "instrument": "no! istanbul instrument examples/calc.js > examples/calc-instrumented.js",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "cover-calc": "nyc -r html node examples/calc.js"
   },
   "devDependencies": {
     "ban-sensitive-files": "1.8.2",
@@ -64,10 +65,11 @@
     "license-checker": "5.1.1",
     "mocha": "2.4.5",
     "nsp": "2.3.0",
+    "nyc": "6.4.0",
     "pre-git": "3.8.3",
+    "semantic-release": "^4.3.5",
     "standard": "6.0.8",
-    "standard-format": "2.1.1",
-    "semantic-release": "^4.3.5"
+    "standard-format": "2.1.1"
   },
   "dependencies": {
     "check-more-types": "2.20.2",

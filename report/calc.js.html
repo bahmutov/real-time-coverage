@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for examples/calc.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class='wrapper'>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="lang-js">// example program to be instrumented
+function add(a, b) {
+  return a + b
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >function sub(a, b) {</span>
+<span class="cstat-no" title="statement not covered" >  return a - b</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >function abs(x) {</span>
+<span class="cstat-no" title="statement not covered" >  if (x &lt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    return -x</span>
+  }
+<span class="cstat-no" title="statement not covered" >  return x</span>
+}
+console.log('2 + 3 =', add(2, 3))
+&nbsp;</pre></td></tr>
+</table></pre>
+</div><!-- /wrapper -->
+</body>
+</html>
