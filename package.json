@@ -2,6 +2,7 @@
   "name": "real-time-coverage",
   "description": "Real time code coverage information for JavaScript",
   "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
+  "version": "0.0.0-semantic-release",
   "bugs": "https://github.com/bahmutov/real-time-coverage/issues",
   "config": {
     "pre-git": {
