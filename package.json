@@ -1,7 +1,6 @@
 {
   "name": "real-time-coverage",
   "description": "Real time code coverage information for JavaScript",
-  "version": "1.0.0",
   "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
   "bugs": "https://github.com/bahmutov/real-time-coverage/issues",
   "config": {
@@ -53,7 +52,8 @@
     "size": "t=\"$(npm pack .)\"; wc -c \"${t}\"; tar tvf \"${t}\"; rm \"${t}\";",
     "test": "npm run unit",
     "unit": "mocha src/*-spec.js",
-    "instrument": "istanbul instrument examples/calc.js > examples/calc-instrumented.js"
+    "instrument": "istanbul instrument examples/calc.js > examples/calc-instrumented.js",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "devDependencies": {
     "ban-sensitive-files": "1.8.2",
@@ -65,6 +65,7 @@
     "nsp": "2.3.0",
     "pre-git": "3.8.3",
     "standard": "6.0.8",
-    "standard-format": "2.1.1"
+    "standard-format": "2.1.1",
+    "semantic-release": "^4.3.5"
   }
 }
