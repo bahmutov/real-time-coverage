@@ -52,12 +52,14 @@
     "secure": "nsp check",
     "size": "t=\"$(npm pack .)\"; wc -c \"${t}\"; tar tvf \"${t}\"; rm \"${t}\";",
     "test": "npm run unit",
-    "unit": "mocha src/*-spec.js"
+    "unit": "mocha src/*-spec.js",
+    "instrument": "istanbul instrument examples/calc.js > examples/calc-instrumented.js"
   },
   "devDependencies": {
     "ban-sensitive-files": "1.8.2",
     "deps-ok": "1.1.0",
     "git-issues": "1.2.0",
+    "istanbul": "0.4.3",
     "license-checker": "5.1.1",
     "mocha": "2.4.5",
     "nsp": "2.3.0",
