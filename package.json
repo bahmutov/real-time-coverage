@@ -55,7 +55,7 @@
     "unit": "mocha src/*-spec.js",
     "instrument": "no! istanbul instrument examples/calc.js > examples/calc-instrumented.js",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "cover-calc": "nyc -r html node examples/calc.js",
+    "cover-calc": "nyc -r json node examples/calc.js",
     "report": "webpack"
   },
   "devDependencies": {
@@ -76,6 +76,7 @@
     "@cycle/core": "6.0.3",
     "@cycle/dom": "9.4.0",
     "check-more-types": "2.20.2",
+    "json-loader": "0.5.4",
     "lazy-ass": "1.4.0",
     "raw-loader": "0.5.1",
     "rx": "4.1.0",
