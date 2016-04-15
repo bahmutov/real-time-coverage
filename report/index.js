@@ -2,23 +2,25 @@ const Cycle = require('@cycle/core')
 const Rx = require('rx')
 const {makeDOMDriver, pre, table, tr, td} = require('@cycle/dom')
 
-const source = `// example program to be instrumented
-function add(a, b) {
-  return a + b
-}
+const source = require('raw!../examples/calc.js')
+// const source = `// example program to be instrumented
+// function add(a, b) {
+//   return a + b
+// }
 
-function sub(a, b) {
-  return a - b
-}
+// function sub(a, b) {
+//   return a - b
+// }
 
-function abs(x) {
-  if (x < 0) {
-    return -x
-  }
-  return x
-}
-console.log('2 + 3 =', add(2, 3))
-`
+// function abs(x) {
+//   if (x < 0) {
+//     return -x
+//   }
+//   return x
+// }
+// console.log('2 + 3 =', add(2, 3))
+// `
+
 const lines = source.split('\n')
 
 function sourceLineToRow (sourceLine, index) {

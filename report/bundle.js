@@ -46,25 +46,27 @@
 
 	const Cycle = __webpack_require__(1)
 	const Rx = __webpack_require__(2)
-	const {makeDOMDriver, pre, table, tr, td, span, div} = __webpack_require__(5)
+	const {makeDOMDriver, pre, table, tr, td} = __webpack_require__(5)
 
-	const source = `// example program to be instrumented
-	function add(a, b) {
-	  return a + b
-	}
+	const source = __webpack_require__(63)
+	// const source = `// example program to be instrumented
+	// function add(a, b) {
+	//   return a + b
+	// }
 
-	function sub(a, b) {
-	  return a - b
-	}
+	// function sub(a, b) {
+	//   return a - b
+	// }
 
-	function abs(x) {
-	  if (x < 0) {
-	    return -x
-	  }
-	  return x
-	}
-	console.log('2 + 3 =', add(2, 3))
-	`
+	// function abs(x) {
+	//   if (x < 0) {
+	//     return -x
+	//   }
+	//   return x
+	// }
+	// console.log('2 + 3 =', add(2, 3))
+	// `
+
 	const lines = source.split('\n')
 
 	function sourceLineToRow (sourceLine, index) {
@@ -79,24 +81,24 @@
 
 	function coverageDom (coverage) {
 	  return table('.coverage', lines.map(sourceLineToRow))
-	  // return pre([
-	  //   table('.coverage', [
-	  //     tr([
-	  //       td('.linecount .quiet', '1\n2\n3\n4\n5'),
-	  //       td('.line-coverage .quiet', [
-	  //         div('.cline-any .cline-yes', '1×'),
-	  //         div('.cline-any .cline-neutral', ' '),
-	  //         div('.cline-any .cline-yes', '1×'),
-	  //         div('.cline-any .cline-yes', '2×'),
-	  //         div('.cline-any .cline-neutral', ' ')
-	  //       ]),
-	  //       td('.text',
-	  //         pre('.lang-js', source
-	  //           )
-	  //         )
-	  //     ])
-	  //   ])
-	  // ])
+	// return pre([
+	//   table('.coverage', [
+	//     tr([
+	//       td('.linecount .quiet', '1\n2\n3\n4\n5'),
+	//       td('.line-coverage .quiet', [
+	//         div('.cline-any .cline-yes', '1×'),
+	//         div('.cline-any .cline-neutral', ' '),
+	//         div('.cline-any .cline-yes', '1×'),
+	//         div('.cline-any .cline-yes', '2×'),
+	//         div('.cline-any .cline-neutral', ' ')
+	//       ]),
+	//       td('.text',
+	//         pre('.lang-js', source
+	//           )
+	//         )
+	//     ])
+	//   ])
+	// ])
 	}
 
 	function view (coverage$) {
@@ -17009,6 +17011,12 @@
 
 	module.exports = exports['default'];
 
+
+/***/ },
+/* 63 */
+/***/ function(module, exports) {
+
+	module.exports = "// example program to be instrumented\nfunction add(a, b) {\n  return a + b\n}\n\nfunction sub(a, b) {\n  return a - b\n}\n\nfunction abs(x) {\n  if (x < 0) {\n    return -x\n  }\n  return x\n}\nconsole.log('2 + 3 =', add(2, 3))\n"
 
 /***/ }
 /******/ ]);
