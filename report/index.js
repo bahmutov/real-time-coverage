@@ -1,6 +1,6 @@
 const Cycle = require('@cycle/core')
 const Rx = require('rx')
-const {makeDOMDriver, pre, table, tr, td, span, div} = require('@cycle/dom')
+const {makeDOMDriver, pre, table, tr, td} = require('@cycle/dom')
 
 const source = `// example program to be instrumented
 function add(a, b) {
@@ -33,24 +33,24 @@ function sourceLineToRow (sourceLine, index) {
 
 function coverageDom (coverage) {
   return table('.coverage', lines.map(sourceLineToRow))
-  // return pre([
-  //   table('.coverage', [
-  //     tr([
-  //       td('.linecount .quiet', '1\n2\n3\n4\n5'),
-  //       td('.line-coverage .quiet', [
-  //         div('.cline-any .cline-yes', '1×'),
-  //         div('.cline-any .cline-neutral', ' '),
-  //         div('.cline-any .cline-yes', '1×'),
-  //         div('.cline-any .cline-yes', '2×'),
-  //         div('.cline-any .cline-neutral', ' ')
-  //       ]),
-  //       td('.text',
-  //         pre('.lang-js', source
-  //           )
-  //         )
-  //     ])
-  //   ])
-  // ])
+// return pre([
+//   table('.coverage', [
+//     tr([
+//       td('.linecount .quiet', '1\n2\n3\n4\n5'),
+//       td('.line-coverage .quiet', [
+//         div('.cline-any .cline-yes', '1×'),
+//         div('.cline-any .cline-neutral', ' '),
+//         div('.cline-any .cline-yes', '1×'),
+//         div('.cline-any .cline-yes', '2×'),
+//         div('.cline-any .cline-neutral', ' ')
+//       ]),
+//       td('.text',
+//         pre('.lang-js', source
+//           )
+//         )
+//     ])
+//   ])
+// ])
 }
 
 function view (coverage$) {
