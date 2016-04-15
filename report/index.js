@@ -23,8 +23,7 @@ function sourceLineToRow (coverage, sourceLine, index) {
 }
 
 function coverageDom (coverage) {
-  const fileCoverage = coverage['calc.js']
-  return table('.coverage', lines.map(sourceLineToRow.bind(null, fileCoverage)))
+  return table('.coverage', lines.map(sourceLineToRow.bind(null, coverage)))
 }
 
 function view (coverage$) {
@@ -33,8 +32,21 @@ function view (coverage$) {
 
 function main ({DOM}) {
   // no incoming events yet?
-  const cover = require('json!./coverage.json')
-  const coverage$ = Rx.Observable.just(cover)
+  const fileCoverage = require('json!./coverage.json')['calc.js']
+  // change the coverage a couple of times
+  const coverage$ = Rx.Observable.create(function (observer) {
+    function incrementCoverage (line) {
+      if (fileCoverage.l[line] === undefined) {
+        console.error('there is no source on line', line)
+        return
+      }
+      fileCoverage.l[line] += 1
+      observer.onNext(fileCoverage)
+    }
+    window.incrementCoverage = incrementCoverage
+  }).startWith(fileCoverage)
+  // const coverage$ = Rx.Observable.just(fileCoverage)
+
   return {
     DOM: view(coverage$)
   }

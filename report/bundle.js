@@ -49,24 +49,6 @@
 	const {makeDOMDriver, pre, table, tr, td} = __webpack_require__(5)
 
 	const source = __webpack_require__(63)
-	// const source = `// example program to be instrumented
-	// function add(a, b) {
-	//   return a + b
-	// }
-
-	// function sub(a, b) {
-	//   return a - b
-	// }
-
-	// function abs(x) {
-	//   if (x < 0) {
-	//     return -x
-	//   }
-	//   return x
-	// }
-	// console.log('2 + 3 =', add(2, 3))
-	// `
-
 	const lines = source.split('\n')
 
 	function sourceLineToRow (coverage, sourceLine, index) {
@@ -87,26 +69,7 @@
 	}
 
 	function coverageDom (coverage) {
-	  const fileCoverage = coverage['calc.js']
-	  return table('.coverage', lines.map(sourceLineToRow.bind(null, fileCoverage)))
-	// return pre([
-	//   table('.coverage', [
-	//     tr([
-	//       td('.linecount .quiet', '1\n2\n3\n4\n5'),
-	//       td('.line-coverage .quiet', [
-	//         div('.cline-any .cline-yes', '1×'),
-	//         div('.cline-any .cline-neutral', ' '),
-	//         div('.cline-any .cline-yes', '1×'),
-	//         div('.cline-any .cline-yes', '2×'),
-	//         div('.cline-any .cline-neutral', ' ')
-	//       ]),
-	//       td('.text',
-	//         pre('.lang-js', source
-	//           )
-	//         )
-	//     ])
-	//   ])
-	// ])
+	  return table('.coverage', lines.map(sourceLineToRow.bind(null, coverage)))
 	}
 
 	function view (coverage$) {
@@ -115,8 +78,21 @@
 
 	function main ({DOM}) {
 	  // no incoming events yet?
-	  const cover = __webpack_require__(64)
-	  const coverage$ = Rx.Observable.just(cover)
+	  const fileCoverage = __webpack_require__(64)['calc.js']
+	  // change the coverage a couple of times
+	  const coverage$ = Rx.Observable.create(function (observer) {
+	    function incrementCoverage (line) {
+	      if (fileCoverage.l[line] === undefined) {
+	        console.error('there is no source on line', line)
+	        return
+	      }
+	      fileCoverage.l[line] += 1
+	      observer.onNext(fileCoverage)
+	    }
+	    window.incrementCoverage = incrementCoverage
+	  }).startWith(fileCoverage)
+	  // const coverage$ = Rx.Observable.just(fileCoverage)
+
 	  return {
 	    DOM: view(coverage$)
 	  }
