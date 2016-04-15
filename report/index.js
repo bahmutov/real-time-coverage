@@ -13,7 +13,14 @@ function coverageDom (coverage) {
           div('.cline-any .cline-yes', '1×'),
           div('.cline-any .cline-yes', '2×'),
           div('.cline-any .cline-neutral', ' ')
-        ])
+        ]),
+        td('.text',
+          pre('.lang-js', `// example program to be instrumented
+function add(a, b) {
+  return a + b
+}`
+            )
+          )
       ])
     ])
   ])
