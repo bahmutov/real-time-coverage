@@ -47,51 +47,32 @@
 	const Cycle = __webpack_require__(1)
 	const Rx = __webpack_require__(2)
 	const {makeDOMDriver, pre, table, tr, td} = __webpack_require__(5)
+	const coverageDom = __webpack_require__(63)
 
-	const source = __webpack_require__(63)
-	const lines = source.split('\n')
-
-	function sourceLineToRow (coverage, sourceLine, index) {
-	  const line = String(index + 1)
-	  const lineCover = coverage.l[line]
-	  const hasSource = lineCover !== undefined
-	  let lineClass = '.cline-neutral'
-	  if (hasSource) {
-	    lineClass = lineCover ? '.cline-yes' : '.cline-no'
-	  }
-	  return tr('.line', [
-	    td('.linecount .quiet', line),
-	    td('.cline-any ' + lineClass, lineCover ? lineCover + '×' : ''),
-	    td('.text',
-	      pre('.lang-js', sourceLine)
-	    )
-	  ])
-	}
-
-	function coverageDom (coverage) {
-	  return table('.coverage', lines.map(sourceLineToRow.bind(null, coverage)))
-	}
+	const source = __webpack_require__(64)
+	const sourceToCoverage = coverageDom.bind(null, source)
 
 	function view (coverage$) {
-	  return coverage$.map(coverageDom)
+	  return coverage$.map(sourceToCoverage)
 	}
 
 	function main ({DOM}) {
 	  // no incoming events yet?
-	  const fileCoverage = __webpack_require__(64)['calc.js']
+	  const fileCoverage = __webpack_require__(65)['calc.js']
+	  const lineCoverage = fileCoverage.l
+
 	  // change the coverage a couple of times
 	  const coverage$ = Rx.Observable.create(function (observer) {
 	    function incrementCoverage (line) {
-	      if (fileCoverage.l[line] === undefined) {
+	      if (lineCoverage[line] === undefined) {
 	        console.error('there is no source on line', line)
 	        return
 	      }
-	      fileCoverage.l[line] += 1
+	      lineCoverage[line] += 1
 	      observer.onNext(fileCoverage)
 	    }
 	    window.incrementCoverage = incrementCoverage
 	  }).startWith(fileCoverage)
-	  // const coverage$ = Rx.Observable.just(fileCoverage)
 
 	  return {
 	    DOM: view(coverage$)
@@ -16998,12 +16979,44 @@
 
 /***/ },
 /* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const {pre, table, tr, td} = __webpack_require__(5)
+
+	function sourceLineToRow (coverage, sourceLine, index) {
+	  const line = String(index + 1)
+	  const lineCover = coverage.l[line]
+	  const hasSource = lineCover !== undefined
+	  let lineClass = '.cline-neutral'
+	  if (hasSource) {
+	    lineClass = lineCover ? '.cline-yes' : '.cline-no'
+	  }
+	  const lineCount = lineCover ? lineCover + '×' : ''
+	  return tr('.line', [
+	    td('.linecount .quiet', line),
+	    td('.cline-any ' + lineClass, lineCount),
+	    td('.text',
+	      pre('.lang-js', sourceLine)
+	    )
+	  ])
+	}
+
+	function coverageDom (source, coverage) {
+	  const lines = source.split('\n')
+	  return table('.coverage', lines.map(sourceLineToRow.bind(null, coverage)))
+	}
+
+	module.exports = coverageDom
+
+
+/***/ },
+/* 64 */
 /***/ function(module, exports) {
 
 	module.exports = "// example program to be instrumented\nfunction add(a, b) {\n  return a + b\n}\n\nfunction sub(a, b) {\n  return a - b\n}\n\nfunction abs(x) {\n  if (x < 0) {\n    return -x\n  }\n  return x\n}\nconsole.log('2 + 3 =', add(2, 3))\n"
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports) {
 
 	module.exports = {
