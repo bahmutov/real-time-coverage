@@ -1,7 +1,13 @@
+// mock coverage information that just sends
+// random "line covered" events to every listener
+
 var WebSocketServer = require('ws').Server
 var wss = new WebSocketServer({ port: 3032 })
 wss.on('connection', function connection (ws) {
   console.log('connection!')
+
+  // TODO: send the full code coverage object right away
+
   ws.on('message', function incoming(message) {
     console.log('received: %s', message)
   })
