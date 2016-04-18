@@ -74,8 +74,23 @@
 	  }).startWith(fileCoverage)
 	}
 
+	function coverageUpdates () {
+	  var ws = new WebSocket('ws://localhost:3032')
+	  ws.onopen = function open () {
+	    console.log('opened socket')
+	  }
+	  ws.onmessage = function message (message) {
+	    console.log('received socket message', message)
+	    const data = JSON.parse(message.data)
+	    if (typeof data.line === 'number') {
+	      window.incrementCoverage(data.line)
+	    }
+	  }
+	}
+
 	function main ({DOM}) {
 	  // dirty code
+	  coverageUpdates()
 	  const coverage = __webpack_require__(65)['calc.js']
 	  const coverage$ = makeCoverageStream(coverage)
 	  return {

@@ -28,8 +28,24 @@ function makeCoverageStream (fileCoverage) {
   }).startWith(fileCoverage)
 }
 
+function coverageUpdates () {
+  /* global WebSocket */
+  var ws = new WebSocket('ws://localhost:3032')
+  ws.onopen = function open () {
+    console.log('opened socket')
+  }
+  ws.onmessage = function message (message) {
+    console.log('received socket message', message)
+    const data = JSON.parse(message.data)
+    if (typeof data.line === 'number') {
+      window.incrementCoverage(data.line)
+    }
+  }
+}
+
 function main ({DOM}) {
   // dirty code
+  coverageUpdates()
   const coverage = require('json!./coverage.json')['calc.js']
   const coverage$ = makeCoverageStream(coverage)
   return {
