@@ -10,13 +10,12 @@ function view (coverage$) {
   return coverage$.map(sourceToCoverage)
 }
 
-function main ({DOM}) {
+function makeCoverageStream (fileCoverage) {
   // no incoming events yet?
-  const fileCoverage = require('json!./coverage.json')['calc.js']
   const lineCoverage = fileCoverage.l
 
   // change the coverage a couple of times
-  const coverage$ = Rx.Observable.create(function (observer) {
+  return Rx.Observable.create(function (observer) {
     function incrementCoverage (line) {
       if (lineCoverage[line] === undefined) {
         console.error('there is no source on line', line)
@@ -27,9 +26,17 @@ function main ({DOM}) {
     }
     window.incrementCoverage = incrementCoverage
   }).startWith(fileCoverage)
+}
 
+function main ({DOM}) {
+  // dirty code
+  const coverage = require('json!./coverage.json')['calc.js']
+  const coverage$ = makeCoverageStream(coverage)
   return {
     DOM: view(coverage$)
   }
 }
-Cycle.run(main, { DOM: makeDOMDriver('#app') })
+const sources = {
+  DOM: makeDOMDriver('#app')
+}
+Cycle.run(main, sources)

@@ -46,7 +46,7 @@
 
 	const Cycle = __webpack_require__(1)
 	const Rx = __webpack_require__(2)
-	const {makeDOMDriver, pre, table, tr, td} = __webpack_require__(5)
+	const {makeDOMDriver} = __webpack_require__(5)
 	const coverageDom = __webpack_require__(63)
 
 	const source = __webpack_require__(64)
@@ -56,13 +56,12 @@
 	  return coverage$.map(sourceToCoverage)
 	}
 
-	function main ({DOM}) {
+	function makeCoverageStream (fileCoverage) {
 	  // no incoming events yet?
-	  const fileCoverage = __webpack_require__(65)['calc.js']
 	  const lineCoverage = fileCoverage.l
 
 	  // change the coverage a couple of times
-	  const coverage$ = Rx.Observable.create(function (observer) {
+	  return Rx.Observable.create(function (observer) {
 	    function incrementCoverage (line) {
 	      if (lineCoverage[line] === undefined) {
 	        console.error('there is no source on line', line)
@@ -73,12 +72,20 @@
 	    }
 	    window.incrementCoverage = incrementCoverage
 	  }).startWith(fileCoverage)
+	}
 
+	function main ({DOM}) {
+	  // dirty code
+	  const coverage = __webpack_require__(65)['calc.js']
+	  const coverage$ = makeCoverageStream(coverage)
 	  return {
 	    DOM: view(coverage$)
 	  }
 	}
-	Cycle.run(main, { DOM: makeDOMDriver('#app') })
+	const sources = {
+	  DOM: makeDOMDriver('#app')
+	}
+	Cycle.run(main, sources)
 
 
 /***/ },
