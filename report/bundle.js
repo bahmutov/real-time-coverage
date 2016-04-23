@@ -105,29 +105,43 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict'
 
-	const isSource = (data) => typeof data.source === 'string'
+	const isSource = (data) => typeof data.source === 'string' && data.filename
+	const isCoverage = (data) => typeof data.coverage === 'string'
 	const isLineIncrement = (data) => typeof data.line === 'number'
 
 	function createCoverageStream () {
 	  /* global Rx, WebSocket */
 	  return Rx.Observable.create(function (observer) {
 	    // mutable data for now?
+	    var filename
 	    var source
-	    var coverage = __webpack_require__(3)['calc.js']
+	    var coverage
+	    // var coverage = require('json!./coverage.json')['calc.js']
 
-	    function setSource (s) {
+	    function setSource (s, f) {
 	      source = s
+	      filename = f
+	      coverage = null
 	      observer.onNext({source, coverage})
 	    }
 
-	    // function setCoverage (c) {
-	    //   coverage = c
-	    //   observer.onNext({source, coverage})
-	    // }
+	    function setCoverage (c) {
+	      if (!filename) {
+	        coverage = null
+	      } else {
+	        // find the right coverage property
+	        Object.keys(c).some((name) => {
+	          if (filename === name) {
+	            coverage = c[name]
+	          }
+	        })
+	        observer.onNext({source, coverage})
+	      }
+	    }
 
 	    function incrementCoverage (line) {
 	      const lineCoverage = coverage.l
@@ -148,10 +162,12 @@
 	      const data = JSON.parse(message.data)
 	      if (isSource(data)) {
 	        console.log('received new source')
-	        // TODO reset coverage
-	        source = data.source
-	        coverage = null
-	        return observer.onNext({source, coverage})
+	        return setSource(data.source, data.filename)
+	      }
+	      if (isCoverage(data)) {
+	        console.log('received new code coverage')
+	        coverage = JSON.parse(data.coverage)
+	        return setCoverage(coverage)
 	      }
 	      if (isLineIncrement(data)) {
 	        return incrementCoverage(data.line)
@@ -165,213 +181,6 @@
 
 	module.exports = createCoverageStream
 
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	module.exports = {
-		"calc.js": {
-			"path": "calc.js",
-			"s": {
-				"1": 1,
-				"2": 1,
-				"3": 1,
-				"4": 0,
-				"5": 1,
-				"6": 0,
-				"7": 0,
-				"8": 0,
-				"9": 1
-			},
-			"b": {
-				"1": [
-					0,
-					0
-				]
-			},
-			"f": {
-				"1": 1,
-				"2": 0,
-				"3": 0
-			},
-			"fnMap": {
-				"1": {
-					"name": "add",
-					"line": 2,
-					"loc": {
-						"start": {
-							"line": 2,
-							"column": 0
-						},
-						"end": {
-							"line": 2,
-							"column": 19
-						}
-					}
-				},
-				"2": {
-					"name": "sub",
-					"line": 6,
-					"loc": {
-						"start": {
-							"line": 6,
-							"column": 0
-						},
-						"end": {
-							"line": 6,
-							"column": 19
-						}
-					}
-				},
-				"3": {
-					"name": "abs",
-					"line": 10,
-					"loc": {
-						"start": {
-							"line": 10,
-							"column": 0
-						},
-						"end": {
-							"line": 10,
-							"column": 16
-						}
-					}
-				}
-			},
-			"statementMap": {
-				"1": {
-					"start": {
-						"line": 2,
-						"column": 0
-					},
-					"end": {
-						"line": 4,
-						"column": 1
-					}
-				},
-				"2": {
-					"start": {
-						"line": 3,
-						"column": 2
-					},
-					"end": {
-						"line": 3,
-						"column": 14
-					}
-				},
-				"3": {
-					"start": {
-						"line": 6,
-						"column": 0
-					},
-					"end": {
-						"line": 8,
-						"column": 1
-					}
-				},
-				"4": {
-					"start": {
-						"line": 7,
-						"column": 2
-					},
-					"end": {
-						"line": 7,
-						"column": 14
-					}
-				},
-				"5": {
-					"start": {
-						"line": 10,
-						"column": 0
-					},
-					"end": {
-						"line": 15,
-						"column": 1
-					}
-				},
-				"6": {
-					"start": {
-						"line": 11,
-						"column": 2
-					},
-					"end": {
-						"line": 13,
-						"column": 3
-					}
-				},
-				"7": {
-					"start": {
-						"line": 12,
-						"column": 4
-					},
-					"end": {
-						"line": 12,
-						"column": 13
-					}
-				},
-				"8": {
-					"start": {
-						"line": 14,
-						"column": 2
-					},
-					"end": {
-						"line": 14,
-						"column": 10
-					}
-				},
-				"9": {
-					"start": {
-						"line": 16,
-						"column": 0
-					},
-					"end": {
-						"line": 16,
-						"column": 33
-					}
-				}
-			},
-			"branchMap": {
-				"1": {
-					"line": 11,
-					"type": "if",
-					"locations": [
-						{
-							"start": {
-								"line": 11,
-								"column": 2
-							},
-							"end": {
-								"line": 11,
-								"column": 2
-							}
-						},
-						{
-							"start": {
-								"line": 11,
-								"column": 2
-							},
-							"end": {
-								"line": 11,
-								"column": 2
-							}
-						}
-					]
-				}
-			},
-			"l": {
-				"2": 1,
-				"3": 1,
-				"6": 1,
-				"7": 0,
-				"10": 1,
-				"11": 0,
-				"12": 0,
-				"14": 0,
-				"16": 1
-			}
-		}
-	};
 
 /***/ }
 /******/ ]);

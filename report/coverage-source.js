@@ -1,24 +1,38 @@
 'use strict'
 
-const isSource = (data) => typeof data.source === 'string'
+const isSource = (data) => typeof data.source === 'string' && data.filename
+const isCoverage = (data) => typeof data.coverage === 'string'
 const isLineIncrement = (data) => typeof data.line === 'number'
 
 function createCoverageStream () {
   /* global Rx, WebSocket */
   return Rx.Observable.create(function (observer) {
     // mutable data for now?
+    var filename
     var source
-    var coverage = require('json!./coverage.json')['calc.js']
+    var coverage
+    // var coverage = require('json!./coverage.json')['calc.js']
 
-    function setSource (s) {
+    function setSource (s, f) {
       source = s
+      filename = f
+      coverage = null
       observer.onNext({source, coverage})
     }
 
-    // function setCoverage (c) {
-    //   coverage = c
-    //   observer.onNext({source, coverage})
-    // }
+    function setCoverage (c) {
+      if (!filename) {
+        coverage = null
+      } else {
+        // find the right coverage property
+        Object.keys(c).some((name) => {
+          if (filename === name) {
+            coverage = c[name]
+          }
+        })
+        observer.onNext({source, coverage})
+      }
+    }
 
     function incrementCoverage (line) {
       const lineCoverage = coverage.l
@@ -39,10 +53,12 @@ function createCoverageStream () {
       const data = JSON.parse(message.data)
       if (isSource(data)) {
         console.log('received new source')
-        // TODO reset coverage
-        source = data.source
-        coverage = null
-        return observer.onNext({source, coverage})
+        return setSource(data.source, data.filename)
+      }
+      if (isCoverage(data)) {
+        console.log('received new code coverage')
+        coverage = JSON.parse(data.coverage)
+        return setCoverage(coverage)
       }
       if (isLineIncrement(data)) {
         return incrementCoverage(data.line)

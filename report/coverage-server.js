@@ -2,6 +2,7 @@
 // random "line covered" events to every listener
 
 const join = require('path').join
+const justName = require('path').basename
 const read = require('fs').readFileSync
 const WebSocketServer = require('ws').Server
 const wss = new WebSocketServer({ port: 3032 })
@@ -34,11 +35,21 @@ function reset () {
 
 setInterval(function () {
   if (reset()) {
-    const filename = join(__dirname, '../examples/calc.js')
-    const source = read(filename, 'utf8')
-    console.log('resetting code coverage', filename)
+    const sourceName = join(__dirname, '../examples/calc.js')
+    const source = read(sourceName, 'utf8')
+    console.log('resetting source code', sourceName)
+    const filename = justName(sourceName) // for now
     wss.broadcast(JSON.stringify({source, filename}))
   }
 }, 5000)
+
+setInterval(function () {
+  if (reset()) {
+    const filename = join(__dirname, './coverage.json')
+    const coverage = read(filename, 'utf8')
+    console.log('resetting code coverage', filename)
+    wss.broadcast(JSON.stringify({coverage}))
+  }
+}, 7000)
 
 console.log('running ws at port 3032')
