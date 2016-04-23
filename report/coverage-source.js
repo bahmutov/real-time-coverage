@@ -4,6 +4,9 @@
 
 const coverage = require('json!./coverage.json')['calc.js']
 
+// mutable data for now
+var _incrementCoverage
+
 function makeCoverageStream (fileCoverage) {
   // no incoming events yet?
   const lineCoverage = fileCoverage.l
@@ -18,9 +21,12 @@ function makeCoverageStream (fileCoverage) {
       lineCoverage[line] += 1
       observer.onNext(fileCoverage)
     }
-    window.incrementCoverage = incrementCoverage
+    window.incrementCoverage = _incrementCoverage = incrementCoverage
   }).startWith(fileCoverage)
 }
+
+const isSource = (data) => typeof data.source === 'object'
+const isLineIncrement = (data) => typeof data.line === 'number'
 
 function coverageUpdates () {
   /* global WebSocket */
@@ -31,8 +37,14 @@ function coverageUpdates () {
   ws.onmessage = function message (message) {
     console.log('received socket message', message)
     const data = JSON.parse(message.data)
-    if (typeof data.line === 'number') {
-      window.incrementCoverage(data.line)
+    if (isSource(data)) {
+      console.log('received new source')
+      // TODO set new source code
+      // TODO reset coverage
+      return
+    }
+    if (isLineIncrement(data)) {
+      _incrementCoverage(data.line)
     }
   }
 }
