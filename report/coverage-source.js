@@ -3,13 +3,14 @@
 /* global Rx */
 
 const coverage = require('json!./coverage.json')['calc.js']
+const source = require('raw!../examples/calc.js')
 
 // mutable data for now
 var _incrementCoverage
 
-function makeCoverageStream (fileCoverage) {
+function makeCoverageStream () {
   // no incoming events yet?
-  const lineCoverage = fileCoverage.l
+  const lineCoverage = coverage.l
 
   // change the coverage a couple of times
   return Rx.Observable.create(function (observer) {
@@ -19,10 +20,10 @@ function makeCoverageStream (fileCoverage) {
         return
       }
       lineCoverage[line] += 1
-      observer.onNext(fileCoverage)
+      observer.onNext({source: source, coverage: coverage})
     }
     window.incrementCoverage = _incrementCoverage = incrementCoverage
-  }).startWith(fileCoverage)
+  }).startWith({source: source, coverage: coverage})
 }
 
 const isSource = (data) => typeof data.source === 'object'
@@ -51,7 +52,6 @@ function coverageUpdates () {
 
 module.exports = function setupCoverageSource () {
   coverageUpdates()
-  const coverage$ = makeCoverageStream(coverage)
-  return coverage$
+  return makeCoverageStream()
 }
 

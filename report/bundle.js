@@ -52,19 +52,13 @@
 	const coverageDom = __webpack_require__(1)
 	const coverageSource = __webpack_require__(2)
 
-	const source = __webpack_require__(4)
-	const sourceToCoverage = coverageDom.bind(null, source)
-
-	function view (coverage$) {
-	  return coverage$.map(sourceToCoverage)
-	}
-
 	function main ({DOM}) {
 	  // dirty code
 	  const coverage$ = coverageSource()
+	  const dom$ = coverageDom(coverage$)
 
 	  return {
-	    DOM: view(coverage$)
+	    DOM: dom$
 	  }
 	}
 	const sources = {
@@ -100,7 +94,7 @@
 	  ])
 	}
 
-	function coverageDom (source, coverage) {
+	function coverageDom ({source, coverage}) {
 	  const lines = source.split('\n')
 	  return table('.coverage', lines.map(sourceLineToRow.bind(null, coverage)))
 	}
@@ -117,13 +111,14 @@
 	/* global Rx */
 
 	const coverage = __webpack_require__(3)['calc.js']
+	const source = __webpack_require__(4)
 
 	// mutable data for now
 	var _incrementCoverage
 
-	function makeCoverageStream (fileCoverage) {
+	function makeCoverageStream () {
 	  // no incoming events yet?
-	  const lineCoverage = fileCoverage.l
+	  const lineCoverage = coverage.l
 
 	  // change the coverage a couple of times
 	  return Rx.Observable.create(function (observer) {
@@ -133,10 +128,10 @@
 	        return
 	      }
 	      lineCoverage[line] += 1
-	      observer.onNext(fileCoverage)
+	      observer.onNext({source: source, coverage: coverage})
 	    }
 	    window.incrementCoverage = _incrementCoverage = incrementCoverage
-	  }).startWith(fileCoverage)
+	  }).startWith({source: source, coverage: coverage})
 	}
 
 	const isSource = (data) => typeof data.source === 'object'
@@ -165,8 +160,7 @@
 
 	module.exports = function setupCoverageSource () {
 	  coverageUpdates()
-	  const coverage$ = makeCoverageStream(coverage)
-	  return coverage$
+	  return makeCoverageStream()
 	}
 
 

@@ -21,7 +21,7 @@ function sourceLineToRow (coverage, sourceLine, index) {
   ])
 }
 
-function coverageDom (source, coverage) {
+function coverageDom ({source, coverage}) {
   const lines = source.split('\n')
   return table('.coverage', lines.map(sourceLineToRow.bind(null, coverage)))
 }
