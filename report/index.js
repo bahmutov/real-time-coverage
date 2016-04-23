@@ -1,6 +1,8 @@
-const Cycle = require('@cycle/core')
-const Rx = require('rx')
-const {makeDOMDriver} = require('@cycle/dom')
+'use strict'
+
+/* global CycleDOM, Cycle, Rx */
+
+const {makeDOMDriver} = CycleDOM
 const coverageDom = require('./virtual-coverage')
 
 const source = require('raw!../examples/calc.js')

@@ -1,4 +1,7 @@
-const {pre, table, tr, td} = require('@cycle/dom')
+'use strict'
+
+/* global CycleDOM */
+const {pre, table, tr, td} = CycleDOM
 
 function sourceLineToRow (coverage, sourceLine, index) {
   const line = String(index + 1)
