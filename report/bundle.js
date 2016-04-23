@@ -46,56 +46,23 @@
 
 	'use strict'
 
-	/* global CycleDOM, Cycle, Rx */
+	/* global CycleDOM, Cycle */
 
 	const {makeDOMDriver} = CycleDOM
 	const coverageDom = __webpack_require__(1)
+	const coverageSource = __webpack_require__(2)
 
-	const source = __webpack_require__(2)
+	const source = __webpack_require__(4)
 	const sourceToCoverage = coverageDom.bind(null, source)
 
 	function view (coverage$) {
 	  return coverage$.map(sourceToCoverage)
 	}
 
-	function makeCoverageStream (fileCoverage) {
-	  // no incoming events yet?
-	  const lineCoverage = fileCoverage.l
-
-	  // change the coverage a couple of times
-	  return Rx.Observable.create(function (observer) {
-	    function incrementCoverage (line) {
-	      if (lineCoverage[line] === undefined) {
-	        console.error('there is no source on line', line)
-	        return
-	      }
-	      lineCoverage[line] += 1
-	      observer.onNext(fileCoverage)
-	    }
-	    window.incrementCoverage = incrementCoverage
-	  }).startWith(fileCoverage)
-	}
-
-	function coverageUpdates () {
-	  /* global WebSocket */
-	  var ws = new WebSocket('ws://localhost:3032')
-	  ws.onopen = function open () {
-	    console.log('opened socket')
-	  }
-	  ws.onmessage = function message (message) {
-	    console.log('received socket message', message)
-	    const data = JSON.parse(message.data)
-	    if (typeof data.line === 'number') {
-	      window.incrementCoverage(data.line)
-	    }
-	  }
-	}
-
 	function main ({DOM}) {
 	  // dirty code
-	  coverageUpdates()
-	  const coverage = __webpack_require__(3)['calc.js']
-	  const coverage$ = makeCoverageStream(coverage)
+	  const coverage$ = coverageSource()
+
 	  return {
 	    DOM: view(coverage$)
 	  }
@@ -143,9 +110,54 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "// example program to be instrumented\nfunction add(a, b) {\n  return a + b\n}\n\nfunction sub(a, b) {\n  return a - b\n}\n\nfunction abs(x) {\n  if (x < 0) {\n    return -x\n  }\n  return x\n}\nconsole.log('2 + 3 =', add(2, 3))\n"
+	'use strict'
+
+	/* global Rx */
+
+	const coverage = __webpack_require__(3)['calc.js']
+
+	function makeCoverageStream (fileCoverage) {
+	  // no incoming events yet?
+	  const lineCoverage = fileCoverage.l
+
+	  // change the coverage a couple of times
+	  return Rx.Observable.create(function (observer) {
+	    function incrementCoverage (line) {
+	      if (lineCoverage[line] === undefined) {
+	        console.error('there is no source on line', line)
+	        return
+	      }
+	      lineCoverage[line] += 1
+	      observer.onNext(fileCoverage)
+	    }
+	    window.incrementCoverage = incrementCoverage
+	  }).startWith(fileCoverage)
+	}
+
+	function coverageUpdates () {
+	  /* global WebSocket */
+	  var ws = new WebSocket('ws://localhost:3032')
+	  ws.onopen = function open () {
+	    console.log('opened socket')
+	  }
+	  ws.onmessage = function message (message) {
+	    console.log('received socket message', message)
+	    const data = JSON.parse(message.data)
+	    if (typeof data.line === 'number') {
+	      window.incrementCoverage(data.line)
+	    }
+	  }
+	}
+
+	module.exports = function setupCoverageSource () {
+	  coverageUpdates()
+	  const coverage$ = makeCoverageStream(coverage)
+	  return coverage$
+	}
+
+
 
 /***/ },
 /* 3 */
@@ -353,6 +365,12 @@
 			}
 		}
 	};
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	module.exports = "// example program to be instrumented\nfunction add(a, b) {\n  return a + b\n}\n\nfunction sub(a, b) {\n  return a - b\n}\n\nfunction abs(x) {\n  if (x < 0) {\n    return -x\n  }\n  return x\n}\nconsole.log('2 + 3 =', add(2, 3))\n"
 
 /***/ }
 /******/ ]);
