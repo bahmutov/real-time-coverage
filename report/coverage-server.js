@@ -27,13 +27,13 @@ setInterval(function () {
   const randomLine = parseInt(Math.random() * 20)
   console.log('sending random line', randomLine)
   wss.broadcast(JSON.stringify({line: randomLine}))
-}, 100000)
+}, 1000)
 
 function reset () {
   return Math.random() < 1
 }
 
-setInterval(function () {
+setTimeout(function () {
   if (reset()) {
     const sourceName = join(__dirname, '../examples/calc.js')
     const source = read(sourceName, 'utf8')
@@ -43,7 +43,7 @@ setInterval(function () {
   }
 }, 5000)
 
-setInterval(function () {
+setTimeout(function () {
   if (reset()) {
     const filename = join(__dirname, './coverage.json')
     const coverage = read(filename, 'utf8')

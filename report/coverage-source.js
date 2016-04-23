@@ -35,9 +35,13 @@ function createCoverageStream () {
     }
 
     function incrementCoverage (line) {
+      if (!source || !coverage) {
+        return
+      }
+
       const lineCoverage = coverage.l
       if (lineCoverage[line] === undefined) {
-        console.error('there is no source on line', line)
+        // console.error('there is no source on line', line)
         return
       }
       lineCoverage[line] += 1
