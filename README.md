@@ -8,6 +8,14 @@
 [![semantic-release][semantic-image] ][semantic-url]
 [![js-standard-style][standard-image]][standard-url]
 
+## Sending coverage via websocket experiment
+
+* Web application [report/index.js](report/index.js) just listens to the socket and draws
+  the report using Cycle
+* Build the web app bundle `npm run report`
+* To test, send random numbers using server `node report/coverage-server.js`
+* Open report/index.html to see changing numbers.
+
 ### Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2016

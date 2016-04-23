@@ -44,9 +44,10 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// const Rx = require('rx')
-	// const Cycle = require('@cycle/core')
-	// const {makeDOMDriver} = require('@cycle/dom')
+	'use strict'
+
+	/* global CycleDOM, Cycle, Rx */
+
 	const {makeDOMDriver} = CycleDOM
 	const coverageDom = __webpack_require__(1)
 
@@ -109,7 +110,9 @@
 /* 1 */
 /***/ function(module, exports) {
 
-	// const {pre, table, tr, td} = require('@cycle/dom')
+	'use strict'
+
+	/* global CycleDOM */
 	const {pre, table, tr, td} = CycleDOM
 
 	function sourceLineToRow (coverage, sourceLine, index) {
