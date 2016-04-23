@@ -78,8 +78,9 @@
 
 	function sourceLineToRow (coverage, sourceLine, index) {
 	  const line = String(index + 1)
-	  const lineCover = coverage.l[line]
+	  const lineCover = coverage ? coverage.l[line] : 0
 	  const hasSource = lineCover !== undefined
+
 	  let lineClass = '.cline-neutral'
 	  if (hasSource) {
 	    lineClass = lineCover ? '.cline-yes' : '.cline-no'
@@ -108,26 +109,28 @@
 
 	'use strict'
 
-	/* global Rx */
-
-	// const source = require('raw!../examples/calc.js')
-
 	const isSource = (data) => typeof data.source === 'string'
 	const isLineIncrement = (data) => typeof data.line === 'number'
 
 	function createCoverageStream () {
-	  // mutable data for now
+	  /* global Rx, WebSocket */
 	  return Rx.Observable.create(function (observer) {
+	    // mutable data for now?
 	    var source
-	    const coverage = __webpack_require__(3)['calc.js']
-	    const lineCoverage = coverage.l
+	    var coverage = __webpack_require__(3)['calc.js']
 
 	    function setSource (s) {
 	      source = s
 	      observer.onNext({source, coverage})
 	    }
 
+	    // function setCoverage (c) {
+	    //   coverage = c
+	    //   observer.onNext({source, coverage})
+	    // }
+
 	    function incrementCoverage (line) {
+	      const lineCoverage = coverage.l
 	      if (lineCoverage[line] === undefined) {
 	        console.error('there is no source on line', line)
 	        return
@@ -136,7 +139,6 @@
 	      observer.onNext({source, coverage})
 	    }
 
-	    /* global WebSocket */
 	    const ws = new WebSocket('ws://localhost:3032')
 	    ws.onopen = function open () {
 	      console.log('opened socket')
@@ -146,14 +148,13 @@
 	      const data = JSON.parse(message.data)
 	      if (isSource(data)) {
 	        console.log('received new source')
-	        // TODO set new source code
 	        // TODO reset coverage
 	        source = data.source
+	        coverage = null
 	        return observer.onNext({source, coverage})
 	      }
 	      if (isLineIncrement(data)) {
-	        // _incrementCoverage(data.line)
-	        // TODO increment coverage for particular line
+	        return incrementCoverage(data.line)
 	      }
 	    }
 

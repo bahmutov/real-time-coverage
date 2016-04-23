@@ -5,8 +5,9 @@ const {pre, table, tr, td} = CycleDOM
 
 function sourceLineToRow (coverage, sourceLine, index) {
   const line = String(index + 1)
-  const lineCover = coverage.l[line]
+  const lineCover = coverage ? coverage.l[line] : 0
   const hasSource = lineCover !== undefined
+
   let lineClass = '.cline-neutral'
   if (hasSource) {
     lineClass = lineCover ? '.cline-yes' : '.cline-no'
