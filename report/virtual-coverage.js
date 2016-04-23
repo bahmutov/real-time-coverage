@@ -26,4 +26,4 @@ function coverageDom ({source, coverage}) {
   return table('.coverage', lines.map(sourceLineToRow.bind(null, coverage)))
 }
 
-module.exports = coverageDom
+module.exports = (coverage__) => coverage__.map(coverageDom)
