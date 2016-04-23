@@ -2,56 +2,56 @@
 
 /* global Rx */
 
-const coverage = require('json!./coverage.json')['calc.js']
-const source = require('raw!../examples/calc.js')
+// const source = require('raw!../examples/calc.js')
 
-// mutable data for now
-var _incrementCoverage
+const isSource = (data) => typeof data.source === 'string'
+const isLineIncrement = (data) => typeof data.line === 'number'
 
-function makeCoverageStream () {
-  // no incoming events yet?
-  const lineCoverage = coverage.l
-
-  // change the coverage a couple of times
+function createCoverageStream () {
+  // mutable data for now
   return Rx.Observable.create(function (observer) {
+    var source
+    const coverage = require('json!./coverage.json')['calc.js']
+    const lineCoverage = coverage.l
+
+    function setSource (s) {
+      source = s
+      observer.onNext({source, coverage})
+    }
+
     function incrementCoverage (line) {
       if (lineCoverage[line] === undefined) {
         console.error('there is no source on line', line)
         return
       }
       lineCoverage[line] += 1
-      observer.onNext({source: source, coverage: coverage})
+      observer.onNext({source, coverage})
     }
-    window.incrementCoverage = _incrementCoverage = incrementCoverage
-  }).startWith({source: source, coverage: coverage})
+
+    /* global WebSocket */
+    const ws = new WebSocket('ws://localhost:3032')
+    ws.onopen = function open () {
+      console.log('opened socket')
+    }
+    ws.onmessage = function message (message) {
+      console.log('received socket message', message)
+      const data = JSON.parse(message.data)
+      if (isSource(data)) {
+        console.log('received new source')
+        // TODO set new source code
+        // TODO reset coverage
+        source = data.source
+        return observer.onNext({source, coverage})
+      }
+      if (isLineIncrement(data)) {
+        // _incrementCoverage(data.line)
+        // TODO increment coverage for particular line
+      }
+    }
+
+    // a couple of testing shortcuts
+    window.liverage = {setSource, incrementCoverage}
+  })
 }
 
-const isSource = (data) => typeof data.source === 'object'
-const isLineIncrement = (data) => typeof data.line === 'number'
-
-function coverageUpdates () {
-  /* global WebSocket */
-  var ws = new WebSocket('ws://localhost:3032')
-  ws.onopen = function open () {
-    console.log('opened socket')
-  }
-  ws.onmessage = function message (message) {
-    console.log('received socket message', message)
-    const data = JSON.parse(message.data)
-    if (isSource(data)) {
-      console.log('received new source')
-      // TODO set new source code
-      // TODO reset coverage
-      return
-    }
-    if (isLineIncrement(data)) {
-      _incrementCoverage(data.line)
-    }
-  }
-}
-
-module.exports = function setupCoverageSource () {
-  coverageUpdates()
-  return makeCoverageStream()
-}
-
+module.exports = createCoverageStream
