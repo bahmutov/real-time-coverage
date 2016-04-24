@@ -11,7 +11,6 @@ function createCoverageStream () {
     var filename
     var source
     var coverage
-    // var coverage = require('json!./coverage.json')['calc.js']
 
     function setSource (s, f) {
       source = s
@@ -70,7 +69,7 @@ function createCoverageStream () {
     }
 
     // a couple of testing shortcuts
-    window.liverage = {setSource, incrementCoverage}
+    window.liverage = {setSource, setCoverage, incrementCoverage}
   })
 }
 
