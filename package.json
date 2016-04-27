@@ -72,15 +72,10 @@
     "standard-format": "2.1.1"
   },
   "dependencies": {
-    "@cycle/core": "6.0.3",
-    "@cycle/dom": "9.4.0",
-    "bufferutil": "1.2.1",
     "check-more-types": "2.20.2",
     "json-loader": "0.5.4",
     "lazy-ass": "1.4.0",
     "raw-loader": "0.5.1",
-    "rx": "4.1.0",
-    "utf-8-validate": "1.2.1",
     "webpack": "1.12.15",
     "ws": "1.1.0"
   }
