@@ -23,7 +23,6 @@
     }
   },
   "files": [
-    "index.js",
     "src/*.js",
     "!src/*-spec.js"
   ],
@@ -36,7 +35,7 @@
     "realtime"
   ],
   "license": "MIT",
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/bahmutov/real-time-coverage.git"
@@ -44,10 +43,10 @@
   "scripts": {
     "ban": "ban",
     "deps": "deps-ok",
-    "format": "standard-format -w index.js src/*.js report/index.js",
+    "format": "standard-format -w src/*.js report/index.js",
     "issues": "git-issues",
     "license": "license-checker --production --onlyunknown --csv",
-    "lint": "standard --verbose index.js src/*.js report/index.js",
+    "lint": "standard --verbose src/*.js report/index.js",
     "pretest": "npm run format && npm run lint",
     "secure": "nsp check",
     "size": "t=\"$(npm pack .)\"; wc -c \"${t}\"; tar tvf \"${t}\"; rm \"${t}\";",
