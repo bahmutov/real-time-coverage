@@ -5,7 +5,7 @@ const isCoverage = (data) => typeof data.coverage === 'string'
 const isLineIncrement = (data) => typeof data.line === 'number'
 
 function createCoverageStream () {
-  /* global Rx, WebSocket */
+  /* global Rx, WebSocket, tinyToast */
   return Rx.Observable.create(function (observer) {
     // mutable data for now?
     var filename
@@ -51,6 +51,9 @@ function createCoverageStream () {
     ws.onopen = function open () {
       console.log('opened socket')
     }
+    ws.onerror = function () {
+      tinyToast.show('Could not connect to the web socket server').hide(4000)
+    }
     ws.onmessage = function message (message) {
       console.log('received socket message', message)
       const data = JSON.parse(message.data)
@@ -66,6 +69,10 @@ function createCoverageStream () {
       if (isLineIncrement(data)) {
         return incrementCoverage(data.line)
       }
+    }
+    ws.onclose = function () {
+      tinyToast.show('Server has finished').hide(5000)
+      // TODO change ui?
     }
 
     // a couple of testing shortcuts
